@@ -1,28 +1,53 @@
-// frontend/src/App.js
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
-import { Container, Nav, Navbar } from 'react-bootstrap';
-import HomePage from "./pages/HomePage";
-import CoursesPage from "./pages/CoursesPage";
+import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap';
+import HomePage from './pages/HomePage';
+import CoursesPage from './pages/CoursesPage';
+import VideoList from './pages/VideoList';
+import VideoPlayer from './pages/VideoPlayer';
+import RegisterPage from './pages/RegisterPage';
+import Footer from './components/Footer';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'aos/dist/aos.css';
+import '@fortawesome/fontawesome-free/css/all.min.css';
+import LoginPage from "./pages/LoginPage";
 
 const App = () => {
     return (
         <Router>
-            <Navbar bg="dark" variant="dark" expand="lg">
-                <Container>
-                    <Navbar.Brand as={Link} to="/">Courses App</Navbar.Brand>
-                    <Nav className="mr-auto">
-                        <Nav.Link as={Link} to="/">Home</Nav.Link>
-                        <Nav.Link as={Link} to="/add-course">Add Course</Nav.Link>
-                    </Nav>
-                </Container>
-            </Navbar>
-            <Container>
-                <Routes>
-                    <Route path="/" element={<HomePage />} />
-                    <Route path="/add-course" element={<CoursesPage />} />
-                </Routes>
-            </Container>
+            <div className="d-flex flex-column min-vh-100">
+                <header>
+                    <Navbar bg="dark" variant="dark" expand="lg" className="mb-4">
+                        <Container>
+                            <Navbar.Brand>Courses App</Navbar.Brand>
+                            <Navbar.Toggle aria-controls="navbarNav" />
+                            <Navbar.Collapse id="navbarNav">
+                                <Nav className="ml-auto">
+                                    <Nav.Link as={Link} to="/">Головна</Nav.Link>
+                                    <Nav.Link as={Link} to="/courses">Курси</Nav.Link>
+                                    <NavDropdown title="Користувач" id="basic-nav-dropdown">
+                                        <NavDropdown.Item as={Link} to="/register">Реєстрація</NavDropdown.Item>
+                                        <NavDropdown.Item as={Link} to="/login">Увійти</NavDropdown.Item>
+                                    </NavDropdown>
+                                </Nav>
+                            </Navbar.Collapse>
+                        </Container>
+                    </Navbar>
+                </header>
+                <main className="flex-grow-1">
+                    <Container>
+                        <Routes>
+                            <Route path="/" element={<HomePage />} />
+                            <Route path="/courses" element={<CoursesPage />} />
+                            <Route path="/course/:courseId" element={<VideoList />} />
+                            <Route path="/course/:courseId/video/:videoId" element={<VideoPlayer />} />
+                            <Route path="/register" element={<RegisterPage />} />
+                            <Route path="/login" element={<LoginPage />} />
+                        </Routes>
+                    </Container>
+                </main>
+                <Footer /> {/* Додавання компонента Footer */}
+            </div>
         </Router>
     );
 };

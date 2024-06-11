@@ -1,11 +1,82 @@
-import React from 'react';
+// frontend/src/pages/CoursesPage.js
+import React, { useEffect } from 'react';
+import { Container, Row, Col, Card, Button } from 'react-bootstrap';
+import CourseListSidebar from '../components/CourseListSidebar';
+import AOS from 'aos';
+import 'aos/dist/aos.css';
+import { Link } from 'react-router-dom';
 
-function CoursesPage() {
+const courses = [
+    {
+        id: 1,
+        title: 'Курс 1',
+        description: 'Це короткий опис Курсу 1. Вивчайте основи та передові теми.',
+        image: 'https://via.placeholder.com/300?text=Курс+1'
+    },
+    {
+        id: 2,
+        title: 'Курс 2',
+        description: 'Це короткий опис Курсу 2. Вивчайте основи та передові теми.',
+        image: 'https://via.placeholder.com/300?text=Курс+2'
+    },
+    {
+        id: 3,
+        title: 'Курс 3',
+        description: 'Це короткий опис Курсу 3. Вивчайте основи та передові теми.',
+        image: 'https://via.placeholder.com/300?text=Курс+3'
+    }
+    // Додайте більше курсів за потреби
+];
+
+const CoursesPage = () => {
+    useEffect(() => {
+        AOS.init({
+            duration: 1000,
+            once: true
+        });
+    }, []);
+
     return (
-        <div>
-            <h1>Courses Page</h1>
-        </div>
+        <Container fluid className="py-5">
+            <Row>
+                <Col md={3} className="mb-4" data-aos="fade-right">
+                    <h4 className="text-center mb-4">Список курсів</h4>
+                    <CourseListSidebar courses={courses} />
+                </Col>
+                <Col md={9} data-aos="fade-left">
+                    <Row className="mb-4">
+                        <Col>
+                            <h2 className="text-center mb-3">Наші курси</h2>
+                            <p className="text-center">
+                                Досліджуйте наш широкий вибір курсів, адаптованих до ваших навчальних потреб.
+                            </p>
+                        </Col>
+                    </Row>
+                    <Row>
+                        {courses.map((course, idx) => (
+                            <Col xs={12} md={6} lg={4} key={idx} className="mb-4">
+                                <Card className="h-100 shadow-sm">
+                                    <Card.Img variant="top" src={course.image} />
+                                    <Card.Body className="d-flex flex-column">
+                                        <Card.Title>{course.title}</Card.Title>
+                                        <Card.Text>{course.description}</Card.Text>
+                                        <Button
+                                            as={Link}
+                                            to={`/course/${course.id}`}
+                                            variant="outline-dark"
+                                            className="mt-auto align-self-start"
+                                        >
+                                            Переглянути курс
+                                        </Button>
+                                    </Card.Body>
+                                </Card>
+                            </Col>
+                        ))}
+                    </Row>
+                </Col>
+            </Row>
+        </Container>
     );
-}
+};
 
 export default CoursesPage;
