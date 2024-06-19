@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^6.5.2",
     "@fortawesome/free-solid-svg-icons": "^6.5.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
     "@testing-library/jest-dom": "^6.4.5",
@@ -11,6 +12,8 @@
     "aos": "^2.3.4",
     "axios": "^1.7.2",
     "bootstrap": "^5.3.3",
+    "postcss": "^8.4.38",
+    "postcss-loader": "^8.1.1",
     "react": "^18.3.1",
     "react-bootstrap": "^2.10.2",
     "react-dom": "^18.3.1",
@@ -43,5 +46,11 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "autoprefixer": "^10.4.19",
+    "caniuse-lite": "^1.0.30001636",
+    "postcss-preset-env": "^9.5.14"
   }
 }
