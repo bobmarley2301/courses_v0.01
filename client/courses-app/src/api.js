@@ -18,7 +18,7 @@ export async function getCourse(courseId) {
 }
 
 export async function createCourse(courseData) {
-    const response = await fetch(`${API_BASE_URL}/courses`, {
+    const response = await fetch(`${API_BASE_URL}/course`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -32,8 +32,8 @@ export async function createCourse(courseData) {
 }
 
 // Функції для роботи з відео
-export async function getVideos(courseId) {
-    const response = await fetch(`${API_BASE_URL}/videos/${courseId}`);
+export async function getVideo(courseId, videoId) {
+    const response = await fetch(`${API_BASE_URL}/course/${courseId}/video/${videoId}`);
     if (!response.ok) {
         throw new Error(`Error fetching videos: ${response.statusText}`);
     }

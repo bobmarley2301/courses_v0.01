@@ -26,6 +26,18 @@ router.get('/:courseId', async (req, res) => {
     }
 });
 
+router.get('/:courseId/video/:videoId', async (req, res) => {
+    try {
+        const video = await Video.findOne({ _id: req.params.videoId, course: req.params.courseId });
+        if (!video) {
+            return res.status(404).json({ message: 'Video not found' });
+        }
+        res.json(video);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
 // Створити новий курс
 router.post('/', async (req, res) => {
     const course = new Course({
