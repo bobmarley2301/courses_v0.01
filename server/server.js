@@ -7,7 +7,7 @@ const cors = require('cors'); // Додано
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT;
+const port = process.env.PORT || 4441; // Додано значення за замовчуванням
 
 // Налаштування CORS
 app.use(cors());
@@ -23,9 +23,8 @@ mongoose.connect(process.env.DB_URL, { useNewUrlParser: true, useUnifiedTopology
 const coursesRouter = require('./routes/courses');
 const videosRouter = require('./routes/videos');
 
-app.use('/api/courses', coursesRouter);
+app.use('/api/course', coursesRouter);
 app.use('/api/videos', videosRouter);
-app.use('/api/course', require('./routes/courses'));
 
 // Запуск сервера
 app.listen(port, () => {

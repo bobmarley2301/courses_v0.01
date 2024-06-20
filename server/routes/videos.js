@@ -18,6 +18,7 @@ router.post('/:courseId', async (req, res) => {
     const video = new Video({
         title: req.body.title,
         description: req.body.description,
+        videoUrl: req.body.videoUrl, // Додано поле для URL відео
         course: req.params.courseId
     });
 
@@ -31,8 +32,5 @@ router.post('/:courseId', async (req, res) => {
         res.status(400).json({ message: err.message });
     }
 });
-
-// Додаткові маршрути (отримання, редагування, видалення відео)
-// ...
 
 module.exports = router;

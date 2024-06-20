@@ -24,7 +24,7 @@ const App = () => {
                             <Navbar.Collapse id="navbarNav">
                                 <Nav className="ml-auto">
                                     <Nav.Link as={Link} to="/">Головна</Nav.Link>
-                                    <Nav.Link as={Link} to="/courses">Курси</Nav.Link>
+                                    <Nav.Link as={Link} to="/course">Курси</Nav.Link>
                                     <NavDropdown title="Користувач" id="basic-nav-dropdown">
                                         <NavDropdown.Item as={Link} to="/register">Реєстрація</NavDropdown.Item>
                                         <NavDropdown.Item as={Link} to="/login">Увійти</NavDropdown.Item>
@@ -38,7 +38,7 @@ const App = () => {
                     <Container>
                         <Routes>
                             <Route path="/" element={<HomePage />} />
-                            <Route path="/courses" element={<CoursesPage />} />
+                            <Route path="/course" element={<CoursesPage />} />
                             <Route path="/course/:courseId" element={<VideoList />} />
                             <Route path="/course/:courseId/video/:videoId" element={<VideoPlayer />} />
                             <Route path="/register" element={<RegisterPage />} />

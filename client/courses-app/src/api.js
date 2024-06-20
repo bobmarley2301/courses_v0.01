@@ -2,7 +2,7 @@ const API_BASE_URL = 'http://localhost:4441/api'; // URL вашого бекен
 
 // Функції для роботи з курсами
 export async function getCourses() {
-    const response = await fetch(`${API_BASE_URL}/courses`);
+    const response = await fetch(`${API_BASE_URL}/course`);
     if (!response.ok) {
         throw new Error(`Error fetching courses: ${response.statusText}`);
     }
@@ -10,7 +10,7 @@ export async function getCourses() {
 }
 
 export async function getCourse(courseId) {
-    const response = await fetch(`${API_BASE_URL}/courses/${courseId}`);
+    const response = await fetch(`${API_BASE_URL}/course/${courseId}`);
     if (!response.ok) {
         throw new Error(`Error fetching course: ${response.statusText}`);
     }

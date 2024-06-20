@@ -1,55 +1,37 @@
 const express = require('express');
 const router = express.Router();
-const Video = require('../models/video');
 const Course = require('../models/course');
-const { route } = require('./videos');
+const Video = require('../models/video');
 
-
-
+// Отримати всі курси
 router.get('/', async (req, res) => {
     try {
-        const courses = await Course.find();
+        const courses = await Course.find().populate('videos');
         res.json(courses);
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
 });
 
-
-// Отримати всі відео для курсу
+// Отримати курс за ID
 router.get('/:courseId', async (req, res) => {
     try {
-        const videos = await Video.find({ course: req.params.courseId });
-        res.json(videos);
+        const course = await Course.findById(req.params.courseId).populate('videos');
+        if (!course) {
+            return res.status(404).json({ message: 'Course not found' });
+        }
+        res.json(course);
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
 });
 
-// Додати нове відео до курсу
-router.post('/:courseId', async (req, res) => {
-    const video = new Video({
-        title: req.body.title,
-        description: req.body.description,
-        videoUrl: req.body.videoUrl, // Додано поле для URL відео
-        course: req.params.courseId
-    });
-
-    try {
-        const newVideo = await video.save();
-        const course = await Course.findById(req.params.courseId);
-        course.videos.push(newVideo);
-        await course.save();
-        res.status(201).json(newVideo);
-    } catch (err) {
-        res.status(400).json({ message: err.message });
-    }
-});
-
+// Створити новий курс
 router.post('/', async (req, res) => {
     const course = new Course({
         title: req.body.title,
-        description: req.body.description
+        description: req.body.description,
+        image: req.body.image
     });
 
     try {
@@ -59,4 +41,5 @@ router.post('/', async (req, res) => {
         res.status(400).json({ message: err.message });
     }
 });
+
 module.exports = router;
