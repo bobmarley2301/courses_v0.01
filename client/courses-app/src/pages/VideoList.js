@@ -7,19 +7,27 @@ import { getCourse } from '../api';
 
 const VideoList = () => {
     const [videos, setVideos] = useState([]);
+    const [course, setCourse] = useState(null);
+    const [error, setError] = useState(null);
     const { courseId } = useParams();
 
     useEffect(() => {
         const fetchVideos = async () => {
             try {
                 const data = await getCourse(courseId);
-                console.log('Fetched course data:', data); // Логування отриманих даних
-                if (data && data.videos) {
-                    setVideos(data.videos);
+                console.log('Fetched course data:', data);
+                if (data) {
+                    setCourse(data);
+                    if (data.videos) {
+                        setVideos(data.videos);
+                    } else {
+                        throw new Error('No videos found in the response');
+                    }
                 } else {
-                    throw new Error('No videos found in the response');
+                    throw new Error('Course not found');
                 }
             } catch (error) {
+                setError(error.message);
                 console.error('Error fetching videos:', error);
             }
         };
@@ -31,16 +39,28 @@ const VideoList = () => {
         });
     }, [courseId]);
 
+    if (error) {
+        return <Container className="py-5"><p className="text-center text-danger">{error}</p></Container>;
+    }
+
+    if (!course) {
+        return <Container className="py-5"><p className="text-center">Завантаження...</p></Container>;
+    }
+
     return (
         <Container fluid className="py-5">
             <Row>
                 <Col>
-                    <h2 className="text-center mb-4" data-aos="fade-up">Відео курсу {courseId}</h2>
+                    <h2 className="text-center mb-4" data-aos="fade-up">Відео курсу {course.title}</h2>
                     <Row>
                         {videos.map((video, idx) => (
                             <Col xs={12} md={6} lg={4} key={video._id} className="mb-4">
                                 <Card className="h-100 shadow-sm" data-aos="fade-up" data-aos-delay={idx * 100}>
-                                    <Card.Img variant="top" src={video.thumbnail || 'https://via.placeholder.com/150'} />
+                                    <Card.Img 
+                                        variant="top" 
+                                        src={video.thumbnail || 'https://via.placeholder.com/150'} 
+                                        alt={video.title}
+                                    />
                                     <Card.Body className="d-flex flex-column">
                                         <Card.Title>{video.title}</Card.Title>
                                         <Card.Text>{video.description}</Card.Text>
@@ -57,6 +77,9 @@ const VideoList = () => {
                             </Col>
                         ))}
                     </Row>
+                    <Link to={`/course`} className="back-link" data-aos="fade-up">
+                        &larr; Назад до списку курсів
+                    </Link>
                 </Col>
             </Row>
         </Container>
