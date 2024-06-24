@@ -18,7 +18,7 @@ export async function getCourse(courseId) {
 }
 
 export async function createCourse(courseData) {
-    const response = await fetch(`${API_BASE_URL}/courses`, {
+    const response = await fetch(`${API_BASE_URL}/course`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -32,8 +32,8 @@ export async function createCourse(courseData) {
 }
 
 // Функції для роботи з відео
-export async function getVideos(courseId) {
-    const response = await fetch(`${API_BASE_URL}/videos/${courseId}`);
+export async function getVideo(courseId, videoId) {
+    const response = await fetch(`${API_BASE_URL}/course/${courseId}/video/${videoId}`);
     if (!response.ok) {
         throw new Error(`Error fetching videos: ${response.statusText}`);
     }
@@ -41,7 +41,7 @@ export async function getVideos(courseId) {
 }
 
 export async function createVideo(courseId, videoData) {
-    const response = await fetch(`${API_BASE_URL}/videos/${courseId}`, {
+    const response = await fetch(`${API_BASE_URL}/course/${courseId}/video`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -64,7 +64,7 @@ export async function getUsers() {
 }
 
 export async function createUser(userData) {
-    const response = await fetch(`${API_BASE_URL}/users`, {
+    const response = await fetch(`${API_BASE_URL}/register`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -73,6 +73,20 @@ export async function createUser(userData) {
     });
     if (!response.ok) {
         throw new Error(`Error creating user: ${response.statusText}`);
+    }
+    return response.json();
+}
+
+export async function loginUser(userData) {
+    const response = await fetch(`${API_BASE_URL}/login`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+    });
+    if (!response.ok) {
+        throw new Error(`Error logging in: ${response.statusText}`);
     }
     return response.json();
 }
