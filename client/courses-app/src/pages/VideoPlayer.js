@@ -53,6 +53,9 @@ const VideoPlayer = () => {
     return (
         <Container fluid className="py-5 video-player-container">
             <Row>
+                <Link to={`/course/${courseId}`} className="text-dark">
+                            &larr; Назад до списку відео
+                </Link>
                 <Col md={8} className="mx-auto text-center">
                     <h2 className="text-center mb-4">{video.title}</h2>
                     <div className="video-wrapper mb-4">
@@ -62,9 +65,7 @@ const VideoPlayer = () => {
                         <p className="mb-2">{video.description.split('\n')[0]}</p>  
                         <p className="mb-0">{video.description.split('\n')[1]}</p>  
                     </div>
-                    <Link to={`/course/${courseId}`} className="back-link">
-                        &larr; Назад до списку відео
-                    </Link>
+                    
                 </Col>
             </Row>
         </Container>

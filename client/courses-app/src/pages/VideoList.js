@@ -51,16 +51,19 @@ const VideoList = () => {
         <Container fluid className="py-5">
             <Row>
                 <Col>
+                    <Link to={`/course`} className="text-dark" data-aos="fade-up">
+                            &larr; Назад до списку курсів
+                    </Link>
                     <h2 className="text-center mb-4" data-aos="fade-up">Відео курсу {course.title}</h2>
                     <Row>
                         {videos.map((video, idx) => (
                             <Col xs={12} md={6} lg={4} key={video._id} className="mb-4">
                                 <Card className="h-100 shadow-sm" data-aos="fade-up" data-aos-delay={idx * 100}>
-                                    <Card.Img 
+                                    {/* <Card.Img 
                                         variant="top" 
                                         src={video.thumbnail || 'https://via.placeholder.com/150'} 
                                         alt={video.title}
-                                    />
+                                    /> */}
                                     <Card.Body className="d-flex flex-column">
                                         <Card.Title>{video.title}</Card.Title>
                                         <Card.Text>{video.description}</Card.Text>
@@ -77,9 +80,6 @@ const VideoList = () => {
                             </Col>
                         ))}
                     </Row>
-                    <Link to={`/course`} className="back-link" data-aos="fade-up">
-                        &larr; Назад до списку курсів
-                    </Link>
                 </Col>
             </Row>
         </Container>

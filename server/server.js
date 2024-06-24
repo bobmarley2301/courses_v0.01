@@ -18,9 +18,11 @@ mongoose.connect(process.env.DB_URL, { useNewUrlParser: true, useUnifiedTopology
 
 const coursesRouter = require('./routes/courses');
 const videosRouter = require('./routes/videos');
+const usersRouter = require('./routes/users');
 
 app.use('/api/course', coursesRouter);
 app.use('/api/videos', videosRouter);
+app.use('/api', usersRouter); // Використовуємо єдиний роутер для реєстрації та входу
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);

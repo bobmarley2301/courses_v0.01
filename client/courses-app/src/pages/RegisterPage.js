@@ -1,10 +1,11 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { CSSTransition } from 'react-transition-group';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
-import 'bootstrap/dist/css/bootstrap.min.css'; // Create this CSS file for page transitions
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { createUser } from '../api';
 
 const RegisterPage = () => {
     useEffect(() => {
@@ -31,7 +32,7 @@ const RegisterPage = () => {
         });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         const { name, email, password, confirmPassword } = formData;
 
@@ -40,13 +41,17 @@ const RegisterPage = () => {
             return;
         }
 
-        // Тут буде логіка для відправлення даних на сервер
-        alert('Реєстрація успішна');
-        navigate('/login');
+        try {
+            await createUser({ name, email, password });
+            alert('Реєстрація успішна');
+            navigate('/login');
+        } catch (error) {
+            alert('Помилка реєстрації: ' + error.message);
+        }
     };
 
     return (
-        <CSSTransition classNames="register-page" timeout={300}>
+        <CSSTransition classNames="register-page" timeout={300} in={true} appear>
             <Container className="py-5">
                 <Row className="justify-content-md-center" data-aos="fade-up">
                     <Col xs={12} md={6}>
