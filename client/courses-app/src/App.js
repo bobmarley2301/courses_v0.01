@@ -19,7 +19,9 @@ const AppNavbar = () => {
     return (
         <Navbar bg="dark" variant="dark" expand="lg" className="mb-4">
             <Container>
-                <Navbar.Brand>step_v_it</Navbar.Brand>
+                <Navbar.Brand>
+                    <img src='/image_2024-07-13_12-10-54.png' height={40} alt='Logo' />
+                </Navbar.Brand>
                 <Navbar.Toggle aria-controls="navbarNav" />
                 <Navbar.Collapse id="navbarNav">
                     <Nav className="ml-auto">

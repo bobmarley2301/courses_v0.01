@@ -1,4 +1,3 @@
-// frontend/src/components/Footer.js
 import React from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 
@@ -18,15 +17,15 @@ const Footer = () => {
                     </Col>
                     <Col md={4} className="text-center text-md-right">
                         <h5>Соціальні мережі</h5>
-                        <a href="#" className="text-white mr-3 m-1">
+                        <button onClick={() => window.location.href = 'https://facebook.com'} style={{ background: 'none', border: 'none', color: 'white', textDecoration: 'underline', cursor: 'pointer', marginRight: '1rem', margin: '0.25rem' }}>
                             <i className="fab fa-facebook-f"></i>
-                        </a>
-                        <a href="#" className="text-white mr-3 m-1">
+                        </button>
+                        <button onClick={() => window.location.href = 'https://twitter.com'} style={{ background: 'none', border: 'none', color: 'white', textDecoration: 'underline', cursor: 'pointer', marginRight: '1rem', margin: '0.25rem' }}>
                             <i className="fab fa-twitter"></i>
-                        </a>
-                        <a href="#" className="text-white m-1">
+                        </button>
+                        <button onClick={() => window.location.href = 'https://instagram.com'} style={{ background: 'none', border: 'none', color: 'white', textDecoration: 'underline', cursor: 'pointer', margin: '0.25rem' }}>
                             <i className="fab fa-instagram"></i>
-                        </a>
+                        </button>
                     </Col>
                 </Row>
                 <Row className="mt-3">
