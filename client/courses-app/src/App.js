@@ -11,7 +11,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'aos/dist/aos.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import LoginPage from "./pages/LoginPage";
-import AuthProvider, { AuthContext } from './context/AuthContext'; // <-- Імпорт AuthProvider і AuthContext
+import AuthProvider, { AuthContext } from './context/AuthContext';
+import AdminMenu from './pages/AdminMenu'; // <-- Імпорт AuthProvider і AuthContext
 
 const AppNavbar = () => {
     const { user, logout } = useContext(AuthContext);
@@ -63,6 +64,7 @@ const App = () => {
                                 <Route path="/course/:courseId/video/:videoId" element={<VideoPlayer />} />
                                 <Route path="/register" element={<RegisterPage />} />
                                 <Route path="/login" element={<LoginPage />} />
+                                <Route path="/admin/*" element={<AdminMenu />} />
                             </Routes>
                         </Container>
                     </main>

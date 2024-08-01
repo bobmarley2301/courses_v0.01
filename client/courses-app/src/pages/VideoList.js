@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { Container, Row, Col, Card, Button } from 'react-bootstrap';
+import { Container, Row, Col, Card, Button, Spinner } from 'react-bootstrap';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import { getCourse } from '../api';
@@ -40,30 +40,35 @@ const VideoList = () => {
     }, [courseId]);
 
     if (error) {
-        return <Container className="py-5"><p className="text-center text-danger">{error}</p></Container>;
+        return (
+            <Container className="py-5">
+                <p className="text-center text-danger">{error}</p>
+            </Container>
+        );
     }
 
     if (!course) {
-        return <Container className="py-5"><p className="text-center">Завантаження...</p></Container>;
+        return (
+            <Container className="py-5 d-flex justify-content-center">
+                <Spinner animation="border" />
+            </Container>
+        );
     }
 
     return (
         <Container fluid className="py-5">
             <Row>
                 <Col>
-                    <Link to={`/course`} className="text-dark" data-aos="fade-up">
-                            &larr; Назад до списку курсів
+                    <Link to="/course" className="text-dark mb-4 d-block" data-aos="fade-up">
+                        &larr; Назад до списку курсів
                     </Link>
-                    <h2 className="text-center mb-4" data-aos="fade-up">Відео курсу {course.title}</h2>
+                    <h2 className="text-center mb-4" data-aos="fade-up">
+                        Відео курсу {course.title}
+                    </h2>
                     <Row>
                         {videos.map((video, idx) => (
-                            <Col xs={12} md={6} lg={4} key={video._id} className="mb-4">
+                            <Col xs={12} key={video._id} className="mb-4">
                                 <Card className="h-100 shadow-sm" data-aos="fade-up" data-aos-delay={idx * 100}>
-                                    {/* <Card.Img 
-                                        variant="top" 
-                                        src={video.thumbnail || 'https://via.placeholder.com/150'} 
-                                        alt={video.title}
-                                    /> */}
                                     <Card.Body className="d-flex flex-column">
                                         <Card.Title>{video.title}</Card.Title>
                                         <Card.Text>{video.description}</Card.Text>

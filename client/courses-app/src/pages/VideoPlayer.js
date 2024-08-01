@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Container, Row, Col    } from 'react-bootstrap';
+import { Container, Row, Col, ListGroup } from 'react-bootstrap';
 import YouTube from 'react-youtube';
 import axios from 'axios';
 import './VideoPlayer.css'; // Імпорт вашого CSS файлу
@@ -27,7 +27,7 @@ const VideoPlayer = () => {
     }, [courseId, videoId]);
 
     const getYouTubeId = (url) => {
-        const regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|\/shorts\/)([^#\&\?]*).*/;
+        const regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|\/shorts\/)([^#&?]*).*/;
         const match = url.match(regExp);
         return (match && match[2].length === 11) ? match[2] : null;
     };
@@ -53,23 +53,26 @@ const VideoPlayer = () => {
     return (
         <Container fluid className="py-5 video-player-container">
             <Row>
-                <Link to={`/course/${courseId}`} className="text-dark">
-                            &larr; Назад до списку відео
+                <Link to={`/course/${courseId}`} className="text-dark mb-4">
+                    &larr; Назад до списку відео
                 </Link>
-                <Col md={8} className="mx-auto text-center">
+                <Col md={8} className="mx-auto">
                     <h2 className="text-center mb-4">{video.title}</h2>
-                    <div className="video-wrapper mb-4">
-                        <YouTube videoId={videoIdFromUrl} opts={{ playerVars: { 'autoplay': 1 } }} className="w-100" />
-                    </div>
-                    <div className="description mb-4">
-                        <p className="mb-2">{video.description.split('\n')[0]}</p>  
-                        <p className="mb-0">{video.description.split('\n')[1]}</p>  
-                    </div>
-                    
+                    <ListGroup as="ul" className="video-info-list">
+                        <ListGroup.Item as="li" className="video-item">
+                            <div className="video-wrapper mb-4">
+                                <YouTube videoId={videoIdFromUrl} opts={{ playerVars: { 'autoplay': 1 } }} className="w-100" />
+                            </div>
+                        </ListGroup.Item>
+                        <ListGroup.Item as="li" className="video-item">
+                            <h4 className="mb-2">Опис</h4>
+                            <p className="mb-0">{video.description}</p>
+                        </ListGroup.Item>
+                    </ListGroup>
                 </Col>
             </Row>
         </Container>
-    )
+    );
 };
 
 export default VideoPlayer;
