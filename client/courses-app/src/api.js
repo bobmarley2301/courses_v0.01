@@ -31,11 +31,21 @@ export async function createCourse(courseData) {
     return response.json();
 }
 
+export async function deleteCourse(courseId) {
+    const response = await fetch(`${API_BASE_URL}/course/${courseId}`, {
+        method: 'DELETE',
+    });
+    if (!response.ok) {
+        throw new Error(`Error deleting course: ${response.statusText}`);
+    }
+    return response.json();
+}
+
 // Функції для роботи з відео
 export async function getVideo(courseId, videoId) {
     const response = await fetch(`${API_BASE_URL}/course/${courseId}/video/${videoId}`);
     if (!response.ok) {
-        throw new Error(`Error fetching videos: ${response.statusText}`);
+        throw new Error(`Error fetching video: ${response.statusText}`);
     }
     return response.json();
 }
@@ -50,6 +60,16 @@ export async function createVideo(courseId, videoData) {
     });
     if (!response.ok) {
         throw new Error(`Error creating video: ${response.statusText}`);
+    }
+    return response.json();
+}
+
+export async function deleteVideo(courseId, videoId) {
+    const response = await fetch(`${API_BASE_URL}/course/${courseId}/video/${videoId}`, {
+        method: 'DELETE',
+    });
+    if (!response.ok) {
+        throw new Error(`Error deleting video: ${response.statusText}`);
     }
     return response.json();
 }
@@ -73,6 +93,20 @@ export async function createUser(userData) {
     });
     if (!response.ok) {
         throw new Error(`Error creating user: ${response.statusText}`);
+    }
+    return response.json();
+}
+
+export async function updateUser(userId, userData) {
+    const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+    });
+    if (!response.ok) {
+        throw new Error(`Error updating user: ${response.statusText}`);
     }
     return response.json();
 }

@@ -9,7 +9,8 @@ router.get('/', async (req, res) => {
         const courses = await Course.find().populate('videos');
         res.json(courses);
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        console.error(err); // Логування помилок
+        res.status(500).json({ message: 'Failed to retrieve courses.' });
     }
 });
 
@@ -18,65 +19,132 @@ router.get('/:courseId', async (req, res) => {
     try {
         const course = await Course.findById(req.params.courseId).populate('videos');
         if (!course) {
-            return res.status(404).json({ message: 'Course not found' });
+            return res.status(404).json({ message: 'Course not found.' });
         }
         res.json(course);
     } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
-});
-
-// Отримати відео за courseId та videoId
-router.get('/:courseId/video/:videoId', async (req, res) => {
-    try {
-        const video = await Video.findOne({ _id: req.params.videoId, course: req.params.courseId });
-        if (!video) {
-            return res.status(404).json({ message: 'Video not found' });
-        }
-        res.json(video);
-    } catch (err) {
-        res.status(500).json({ message: err.message });
+        console.error(err); // Логування помилок
+        res.status(500).json({ message: 'Failed to retrieve the course.' });
     }
 });
 
 // Створити новий курс
 router.post('/', async (req, res) => {
+    const { title, description, image } = req.body;
+
+    if (!title || !description || !image) {
+        return res.status(400).json({ message: 'Missing required fields: title, description, or image.' });
+    }
+
     const course = new Course({
-        title: req.body.title,
-        description: req.body.description,
-        image: req.body.image
+        title,
+        description,
+        image
     });
 
     try {
         const newCourse = await course.save();
         res.status(201).json(newCourse);
     } catch (err) {
-        res.status(400).json({ message: err.message });
+        console.error(err); // Логування помилок
+        res.status(400).json({ message: 'Failed to create the course.' });
     }
 });
 
-// Створити нове відео до курсу
-router.post("/:courseId", async (req, res) => {
-    const { title, description, videoUrl } = req.body;
-    const courseId = req.params.courseId;
+// Видалити курс за ID
+router.delete('/:courseId', async (req, res) => {
+    try {
+        const course = await Course.findById(req.params.courseId);
+        if (!course) {
+            return res.status(404).json({ message: 'Course not found.' });
+        }
+
+        // Видалити всі відео, пов'язані з курсом
+        await Video.deleteMany({ course: req.params.courseId });
+
+        await Course.findByIdAndDelete(req.params.courseId);
+        res.json({ message: 'Course deleted successfully.' });
+    } catch (err) {
+        console.error(err); // Логування помилок
+        res.status(500).json({ message: 'Failed to delete the course.' });
+    }
+});
+
+// Отримати всі відео для курсу
+router.get('/:courseId/video', async (req, res) => {
+    try {
+        const course = await Course.findById(req.params.courseId).populate('videos');
+        if (!course) {
+            return res.status(404).json({ message: 'Course not found.' });
+        }
+        res.json(course.videos);
+    } catch (err) {
+        console.error(err); // Логування помилок
+        res.status(500).json({ message: 'Failed to retrieve videos.' });
+    }
+});
+
+// Отримати відео за ID
+router.get('/:courseId/video/:videoId', async (req, res) => {
+    try {
+        const video = await Video.findById(req.params.videoId);
+        if (!video || video.course.toString() !== req.params.courseId) {
+            return res.status(404).json({ message: 'Video not found.' });
+        }
+        res.json(video);
+    } catch (err) {
+        console.error(err); // Логування помилок
+        res.status(500).json({ message: 'Failed to retrieve the video.' });
+    }
+});
+
+// Створити нове відео для курсу
+router.post('/:courseId/video', async (req, res) => {
+    const { title, url } = req.body;
+
+    if (!title || !url) {
+        return res.status(400).json({ message: 'Missing required fields: title or url.' });
+    }
+
+    const course = await Course.findById(req.params.courseId);
+    if (!course) {
+        return res.status(404).json({ message: 'Course not found.' });
+    }
+
+    const video = new Video({
+        title,
+        url,
+        course: req.params.courseId
+    });
 
     try {
-        const newVideo = new Video({
-            title,
-            description,
-            videoUrl,
-            course: courseId
-        });
+        const newVideo = await video.save();
+        course.videos.push(newVideo);
+        await course.save();
+        res.status(201).json(newVideo);
+    } catch (err) {
+        console.error(err); // Логування помилок
+        res.status(400).json({ message: 'Failed to create the video.' });
+    }
+});
 
-        const savedVideo = await newVideo.save();
-        const course = await Course.findById(courseId);
+// Видалити відео за ID
+router.delete('/:courseId/video/:videoId', async (req, res) => {
+    try {
+        const video = await Video.findById(req.params.videoId);
+        if (!video || video.course.toString() !== req.params.courseId) {
+            return res.status(404).json({ message: 'Video not found.' });
+        }
 
-        course.videos.push(savedVideo._id);
+        await Video.findByIdAndDelete(req.params.videoId);
+        const course = await Course.findById(req.params.courseId);
+        course.videos = course.videos.filter(v => v.toString() !== req.params.videoId);
         await course.save();
 
-        res.status(201).json(savedVideo);
+        res.json({ message: 'Video deleted successfully.' });
     } catch (err) {
-        res.status(400).json({ message: err.message });
+        console.error(err); // Логування помилок
+        res.status(500).json({ message: 'Failed to delete the video.' });
     }
 });
 
