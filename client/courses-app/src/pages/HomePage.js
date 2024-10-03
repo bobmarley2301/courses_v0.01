@@ -155,7 +155,6 @@ const HomePage = () => {
                                     <Card.Body>
                                         <Card.Title>{course.title}</Card.Title>
                                         <Card.Text>{course.description}</Card.Text>
-                                        <Button variant="outline-light" as={Link} to={`/course/${course._id}`}>Дізнатись більше</Button>
                                     </Card.Body>
                                 </Card>
                             </Col>

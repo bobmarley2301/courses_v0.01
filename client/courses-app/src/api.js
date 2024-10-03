@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:4441/api'; // URL вашого бекенду
+const API_BASE_URL = 'https://courses-v0-01-server.onrender.com/api'; // URL вашого бекенду
 
 // Функції для роботи з курсами
 export async function getCourses() {

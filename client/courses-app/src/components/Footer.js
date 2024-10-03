@@ -8,12 +8,12 @@ const Footer = () => {
                 <Row>
                     <Col md={4} className="text-center text-md-left mb-3 mb-md-0">
                         <h5>Про нас</h5>
-                        <p>Ми пропонуємо найкращі онлайн курси для вашого навчання.</p>
+                        <p>Ми пропонуємо найкращі аматорські онлайн курси для вашого навчання.</p>
                     </Col>
                     <Col md={4} className="text-center mb-3 mb-md-0">
                         <h5>Контакти</h5>
-                        <p>Email: info@coursesapp.com</p>
-                        <p>Телефон: +380 123 456 789</p>
+                        <p>Email: aremcukdmitro240@gmail.com</p>
+                        <p>Телефон: +380 93 532 15 67</p>
                     </Col>
                     <Col md={4} className="text-center text-md-right">
                         <h5>Соціальні мережі</h5>
