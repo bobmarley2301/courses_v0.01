@@ -14,7 +14,7 @@ const VideoPlayer = () => {
     useEffect(() => {
         const fetchVideo = async () => {
             try {
-                const response = await axios.get(`http://localhost:4441/api/course/${courseId}/video/${videoId}`);
+                const response = await axios.get(`https://courses-v0-01-server.onrender.com/api/course/${courseId}/video/${videoId}`);
                 setVideo(response.data);
                 setLoading(false);
             } catch (err) {

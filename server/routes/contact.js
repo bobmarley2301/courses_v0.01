@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const Contact = require('../models/contact');
+const cors = require('cors');
+
 
 router.post('/', async (req, res) => {
     try {

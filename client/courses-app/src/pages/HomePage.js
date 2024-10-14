@@ -45,7 +45,7 @@ const HomePage = () => {
 
     const fetchComments = async () => {
         try {
-            const response = await fetch('http://localhost:4441/api/contact');
+            const response = await fetch('https://courses-v0-01-server.onrender.com/api/contact');
             const data = await response.json();
             if (data.length === 0) {
                 setComments([{ _id: 'default', name: 'Anonymous', message: 'No comments yet.' }]);
@@ -68,7 +68,7 @@ const HomePage = () => {
         console.log('Form data being submitted:', formData);
 
         try {
-            const response = await fetch('http://localhost:4441/api/contact', {
+            const response = await fetch('https://courses-v0-01-server.onrender.com/api/contact', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
