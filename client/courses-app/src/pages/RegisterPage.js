@@ -61,7 +61,7 @@ const RegisterPage = () => {
     return (
         <>
             <CSSTransition classNames="register-page" timeout={300} in={true} appear>
-                <Container className="py-5">
+                <Container className="py-5 min-vh-100">
                     <Row className="justify-content-md-center" data-aos="fade-up">
                         <Col xs={12} md={6}>
                             <h2 className="text-center mb-4">Реєстрація</h2>

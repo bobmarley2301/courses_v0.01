@@ -1,0 +1,30 @@
+/*html, body {*/
+/*    height: 100%;*/
+/*    margin: 0;*/
+/*    padding: 0;*/
+/*}*/
+
+/*.container {*/
+/*    display: flex;*/
+/*    flex-direction: column;*/
+/*    justify-content: center;*/
+/*    min-height: 100vh; !* Висота контейнера на всю висоту екрану *!*/
+/*}*/
+
+/*.login-page-enter {*/
+/*    opacity: 0;*/
+/*}*/
+
+/*.login-page-enter-active {*/
+/*    opacity: 1;*/
+/*    transition: opacity 300ms;*/
+/*}*/
+
+/*.login-page-exit {*/
+/*    opacity: 1;*/
+/*}*/
+
+/*.login-page-exit-active {*/
+/*    opacity: 0;*/
+/*    transition: opacity 300ms;*/
+/*}*/

@@ -7,6 +7,7 @@ import 'aos/dist/aos.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { loginUser } from '../api';
 import { AuthContext } from '../context/AuthContext';
+// import './App.css';  // Додайте свій CSS файл з стилями
 
 const LoginPage = () => {
     const { login } = useContext(AuthContext);
@@ -56,7 +57,7 @@ const LoginPage = () => {
     return (
         <>
             <CSSTransition classNames="login-page" timeout={300} in={true} appear>
-                <Container className="py-5">
+                <Container fluid className="d-flex flex-column justify-content-center min-vh-100">
                     <Row className="justify-content-md-center" data-aos="fade-up">
                         <Col xs={12} md={6}>
                             <h2 className="text-center mb-4">Вхід</h2>

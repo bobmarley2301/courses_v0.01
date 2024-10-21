@@ -56,7 +56,7 @@ const VideoList = () => {
     }
 
     return (
-        <Container fluid className="py-5">
+        <Container fluid className="py-5 min-vh-100">
             <Row>
                 <Col>
                     <Link to="/course" className="text-dark mb-4 d-block" data-aos="fade-up">

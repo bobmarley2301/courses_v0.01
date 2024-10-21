@@ -30,7 +30,7 @@ const CoursesPage = () => {
     }, []);
 
     return (
-        <Container fluid className="py-5">
+        <Container fluid className="py-5 min-vh-100">
             <Row>
                 <Col md={9} data-aos="fade-left">
                     {user ? (

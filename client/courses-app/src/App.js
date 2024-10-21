@@ -12,7 +12,7 @@ import 'aos/dist/aos.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import LoginPage from "./pages/LoginPage";
 import AuthProvider, { AuthContext } from './context/AuthContext';
-import AdminMenu from './pages/AdminMenu'; // <-- Імпорт AuthProvider і AuthContext
+import AdminMenu from './pages/AdminMenu';
 
 const AppNavbar = () => {
     const { user, logout } = useContext(AuthContext);

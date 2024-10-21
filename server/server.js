@@ -17,12 +17,11 @@ mongoose.connect(process.env.DB_URL, { useNewUrlParser: true, useUnifiedTopology
     .catch((error) => console.error('Error connecting to MongoDB:', error));
 
 const coursesRouter = require('./routes/courses');
-// const videosRouter = require('./routes/videos');
 const usersRouter = require('./routes/users');
-const contactsRouter = require('./routes/contact'); // Переконайтеся, що шлях правильний
+const contactsRouter = require('./routes/contact');
 
 app.use('/api/course', coursesRouter);
-// app.use('/api/videos', videosRouter);
+
 app.use('/api', usersRouter);
 app.use('/api/contact', contactsRouter);
 

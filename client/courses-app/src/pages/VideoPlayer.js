@@ -51,7 +51,7 @@ const VideoPlayer = () => {
     }
 
     return (
-        <Container fluid className="py-5 video-player-container">
+        <Container fluid className="py-5 video-player-container min-vh-100">
             <Row>
                 <Link to={`/course/${courseId}`} className="text-dark mb-4">
                     &larr; Назад до списку відео
