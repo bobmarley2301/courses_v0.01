@@ -70,8 +70,8 @@ const CoursesPage = () => {
                             <Col md={8} className="text-center">
                                 <h2>Будь ласка, увійдіть або зареєструйтесь</h2>
                                 <p>Щоб переглянути наші курси, вам необхідно увійти або зареєструватися.</p>
-                                <Button as={Link} to="/login" variant="primary" className="mx-2">Увійти</Button>
-                                <Button as={Link} to="/register" variant="secondary" className="mx-2">Зареєструватися</Button>
+                                <Button as={Link} to="/login" variant="dark" className="mx-2">Увійти</Button>
+                                <Button as={Link} to="/register" variant="outline-dark" className="mx-2">Зареєструватися</Button>
                             </Col>
                         </Row>
                     )}
