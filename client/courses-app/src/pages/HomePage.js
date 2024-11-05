@@ -197,8 +197,8 @@ const HomePage = () => {
                 <Container className="py-5" data-aos="fade-up" style={{ marginBottom: '150px', marginTop: '150px' }}>
                     <Row className="mb-5">
                         <Col>
-                            <h2 className="text-center mb-3" style={{ color: 'white', fontSize: '2.5rem' }}>Зв'язатися з нами</h2>
-                            <p className="text-center mb-3" style={{ color: 'white', fontSize: '1.25rem' }}>Маєте питання? Залиште свої дані, і ми зв'яжемося з вами якомога швидше.</p>
+                            <h2 className="text-center mb-3" style={{ color: 'white', fontSize: '2.5rem' }}>Напишіть відгук)</h2>
+                            <p className="text-center mb-3" style={{ color: 'white', fontSize: '1.25rem' }}>Скарги або пропозиції все сюда:)</p>
                         </Col>
                     </Row>
                     <Row className="justify-content-center">

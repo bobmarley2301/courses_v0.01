@@ -101,7 +101,7 @@ const LoginPage = () => {
                 </Modal.Header>
                 <Modal.Body>{modalMessage}</Modal.Body>
                 <Modal.Footer>
-                    <Button variant="primary" onClick={handleCloseModal}>
+                    <Button variant="dark" onClick={handleCloseModal}>
                         ОК
                     </Button>
                 </Modal.Footer>
