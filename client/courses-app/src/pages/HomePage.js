@@ -7,7 +7,7 @@ import AOS from 'aos';
 import 'aos/dist/aos.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '@fortawesome/fontawesome-svg-core/styles.css';
-import { getCourses } from '../api'; // Import the function to get courses
+import { getCourses } from '../api';
 import { Link } from 'react-router-dom';
 
 const HomePage = () => {

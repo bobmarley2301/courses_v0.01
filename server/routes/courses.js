@@ -100,10 +100,10 @@ router.get('/:courseId/video/:videoId', async (req, res) => {
 
 // Створити нове відео для курсу
 router.post('/:courseId/video', async (req, res) => {
-    const { title, url } = req.body;
+    const { title, videoUrl, description, image } = req.body;  // Переконайтеся, що тут використовується videoUrl
 
-    if (!title || !url) {
-        return res.status(400).json({ message: 'Missing required fields: title or url.' });
+    if (!title || !videoUrl) {
+        return res.status(400).json({ message: 'Missing required fields: title or videoUrl.' });
     }
 
     const course = await Course.findById(req.params.courseId);
@@ -113,7 +113,9 @@ router.post('/:courseId/video', async (req, res) => {
 
     const video = new Video({
         title,
-        url,
+        description,
+        image,
+        videoUrl,
         course: req.params.courseId
     });
 
@@ -127,6 +129,7 @@ router.post('/:courseId/video', async (req, res) => {
         res.status(400).json({ message: 'Failed to create the video.' });
     }
 });
+
 
 // Видалити відео за ID
 router.delete('/:courseId/video/:videoId', async (req, res) => {
