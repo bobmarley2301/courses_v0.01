@@ -192,6 +192,24 @@ const HomePage = () => {
                 </Container>
             </Element>
 
+            <Element>
+                <Container>
+                    <Row className={"justify-content-center mb-5"}>
+                        <h2 className="text-center mb-3 text-white">Підтримайте на Patreon</h2>
+                        <p className="text-center mb-3 text-white">Для провадження нових проектів :)</p>
+                    </Row>
+                    <Row className="justify-content-center mb-5 text-center">
+                        <a href="https://www.patreon.com/yourpage" target="_blank" rel="noopener noreferrer">
+                            <button className="btn btn-lg btn-outline-light px-5 py-3 text-white border-0 shadow-lg">
+                                Підтримати
+                            </button>
+                        </a>
+                    </Row>
+                </Container>
+            </Element>
+
+
+
             {/* Contact Section */}
             <Element name="contact-section">
                 <Container className="py-5" data-aos="fade-up" style={{ marginBottom: '150px', marginTop: '150px' }}>
