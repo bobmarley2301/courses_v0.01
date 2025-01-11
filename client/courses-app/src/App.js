@@ -13,6 +13,7 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import LoginPage from "./pages/LoginPage";
 import AuthProvider, { AuthContext } from './context/AuthContext';
 import AdminMenu from './pages/AdminMenu';
+import PrivacyPolicy from './pages/PrivacyPolicy';
 
 const AppNavbar = () => {
     const { user, logout } = useContext(AuthContext);
@@ -65,6 +66,7 @@ const App = () => {
                                 <Route path="/register" element={<RegisterPage />} />
                                 <Route path="/login" element={<LoginPage />} />
                                 <Route path="/admin/*" element={<AdminMenu />} />
+                                <Route path="/privacy-policy" element="PrivacyPolicy"></Route>
                             </Routes>
                         </Container>
                     </main>
