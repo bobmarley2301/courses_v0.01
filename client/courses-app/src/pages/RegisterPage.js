@@ -1,141 +1,251 @@
-import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Form, Button, Modal } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
-import { CSSTransition } from 'react-transition-group';
-import AOS from 'aos';
-import 'aos/dist/aos.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import { createUser } from '../api';
+import React, { useState, useEffect } from "react";
+import { Container, Form, Button, Card, Alert } from "react-bootstrap";
+import { Link, useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faUser,
+  faLock,
+  faEnvelope,
+  faArrowRight,
+} from "@fortawesome/free-solid-svg-icons";
+import { createUser } from "../api";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 const RegisterPage = () => {
-    useEffect(() => {
-        AOS.init({
-            duration: 1000,
-            once: true
-        });
-    }, []);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
-    const [formData, setFormData] = useState({
-        name: '',
-        email: '',
-        password: '',
-        confirmPassword: ''
+  useEffect(() => {
+    AOS.init({
+      duration: 1000,
+      once: true,
     });
+  }, []);
 
-    const [showModal, setShowModal] = useState(false);
-    const [modalMessage, setModalMessage] = useState('');
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setIsLoading(true);
 
-    const navigate = useNavigate();
+    if (formData.password !== formData.confirmPassword) {
+      setError("Паролі не співпадають");
+      setIsLoading(false);
+      return;
+    }
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({
-            ...formData,
-            [name]: value
-        });
-    };
+    try {
+      const userData = {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+      };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        const { name, email, password, confirmPassword } = formData;
+      const response = await createUser(userData);
+      console.log("Registration response:", response);
 
-        if (password !== confirmPassword) {
-            alert('Паролі не співпадають');
-            return;
-        }
+      if (response && response._id) {
+        // Зберігаємо дані користувача
+        localStorage.setItem("userId", response._id);
+        localStorage.setItem("userName", response.name);
+        localStorage.setItem("userEmail", response.email);
+        localStorage.setItem("isAuthenticated", "true");
 
-        try {
-            await createUser({ name, email, password });
-            setModalMessage('Реєстрація успішна');
-            setShowModal(true);
-        } catch (error) {
-            alert('Помилка реєстрації: ' + error.message);
-        }
-    };
+        // Перенаправляємо на сторінку курсів
+        navigate("/course");
+      } else {
+        throw new Error("Помилка отримання даних користувача");
+      }
+    } catch (error) {
+      console.error("Registration error:", error);
+      if (error.status === 409) {
+        setError("Користувач з такою електронною поштою вже існує");
+      } else if (error.status === 400) {
+        setError("Будь ласка, перевірте правильність введених даних");
+      } else if (error.status === 404) {
+        setError("Сервіс тимчасово недоступний");
+      } else {
+        setError("Помилка реєстрації. Спробуйте ще раз пізніше.");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-    const handleCloseModal = () => {
-        setShowModal(false);
-        navigate('/login');
-    };
+  const inputStyle = {
+    backgroundColor: "#f8f9fa",
+    border: "1px solid #e2e8f0",
+    color: "#2d3748",
+    borderRadius: "12px",
+    padding: "0.8rem 1rem 0.8rem 3rem",
+    fontSize: "1rem",
+    transition: "all 0.3s ease",
+    height: "auto",
+    "&::placeholder": {
+      color: "#a0aec0",
+    },
+  };
 
-    return (
-        <>
-            <CSSTransition classNames="register-page" timeout={300} in={true} appear>
-                <Container className="py-5 min-vh-100">
-                    <Row className="justify-content-md-center" data-aos="fade-up">
-                        <Col xs={12} md={6}>
-                            <h2 className="text-center mb-4">Реєстрація</h2>
-                            <Form onSubmit={handleSubmit}>
-                                <Form.Group controlId="formName" className="mb-3">
-                                    <Form.Label>Ім'я</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        placeholder="Введіть ваше ім'я"
-                                        name="name"
-                                        value={formData.name}
-                                        onChange={handleChange}
-                                        required
-                                    />
-                                </Form.Group>
+  const iconStyle = {
+    position: "absolute",
+    top: "50%",
+    left: "15px",
+    transform: "translateY(-50%)",
+    color: "#3182ce",
+    fontSize: "1.1rem",
+    transition: "all 0.3s ease",
+  };
 
-                                <Form.Group controlId="formEmail" className="mb-3">
-                                    <Form.Label>Email</Form.Label>
-                                    <Form.Control
-                                        type="email"
-                                        placeholder="Введіть ваш email"
-                                        name="email"
-                                        value={formData.email}
-                                        onChange={handleChange}
-                                        required
-                                    />
-                                </Form.Group>
+  return (
+    <div className="min-vh-100 d-flex align-items-center justify-content-center py-5">
+      <Container className="px-4" style={{ maxWidth: "450px" }}>
+        <Card
+          className="border-0 p-4 p-md-5"
+          data-aos="fade-up"
+          style={{
+            backgroundColor: "#ffffff",
+            borderRadius: "20px",
+            boxShadow:
+              "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+          }}
+        >
+          <div className="text-center mb-4">
+            <h2
+              className="mb-2"
+              style={{
+                color: "#2d3748",
+                fontSize: "2.2rem",
+                fontWeight: "600",
+                letterSpacing: "0.5px",
+              }}
+            >
+              Реєстрація
+            </h2>
+            <p className="text-muted mb-4">
+              Створіть свій обліковий запис для доступу до курсів
+            </p>
+          </div>
 
-                                <Form.Group controlId="formPassword" className="mb-3">
-                                    <Form.Label>Пароль</Form.Label>
-                                    <Form.Control
-                                        type="password"
-                                        placeholder="Введіть пароль"
-                                        name="password"
-                                        value={formData.password}
-                                        onChange={handleChange}
-                                        required
-                                    />
-                                </Form.Group>
+          {error && (
+            <Alert variant="danger" className="mb-4">
+              {error}
+            </Alert>
+          )}
 
-                                <Form.Group controlId="formConfirmPassword" className="mb-3">
-                                    <Form.Label>Підтвердіть пароль</Form.Label>
-                                    <Form.Control
-                                        type="password"
-                                        placeholder="Підтвердіть пароль"
-                                        name="confirmPassword"
-                                        value={formData.confirmPassword}
-                                        onChange={handleChange}
-                                        required
-                                    />
-                                </Form.Group>
+          <Form onSubmit={handleSubmit} className="d-flex flex-column gap-3">
+            <Form.Group>
+              <div className="position-relative">
+                <FontAwesomeIcon icon={faUser} style={iconStyle} />
+                <Form.Control
+                  type="text"
+                  placeholder="Ваше ім'я"
+                  value={formData.name}
+                  onChange={(e) =>
+                    setFormData({ ...formData, name: e.target.value })
+                  }
+                  required
+                  style={inputStyle}
+                />
+              </div>
+            </Form.Group>
 
-                                <Button variant="outline-dark" type="submit" className="w-100">
-                                    Зареєструватися
-                                </Button>
-                            </Form>
-                        </Col>
-                    </Row>
-                </Container>
-            </CSSTransition>
+            <Form.Group>
+              <div className="position-relative">
+                <FontAwesomeIcon icon={faEnvelope} style={iconStyle} />
+                <Form.Control
+                  type="email"
+                  placeholder="Електронна пошта"
+                  value={formData.email}
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
+                  }
+                  required
+                  style={inputStyle}
+                />
+              </div>
+            </Form.Group>
 
-            <Modal show={showModal} onHide={handleCloseModal}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Повідомлення</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>{modalMessage}</Modal.Body>
-                <Modal.Footer>
-                    <Button variant="primary" onClick={handleCloseModal}>
-                        ОК
-                    </Button>
-                </Modal.Footer>
-            </Modal>
-        </>
-    );
+            <Form.Group>
+              <div className="position-relative">
+                <FontAwesomeIcon icon={faLock} style={iconStyle} />
+                <Form.Control
+                  type="password"
+                  placeholder="Пароль"
+                  value={formData.password}
+                  onChange={(e) =>
+                    setFormData({ ...formData, password: e.target.value })
+                  }
+                  required
+                  style={inputStyle}
+                />
+              </div>
+            </Form.Group>
+
+            <Form.Group>
+              <div className="position-relative">
+                <FontAwesomeIcon icon={faLock} style={iconStyle} />
+                <Form.Control
+                  type="password"
+                  placeholder="Підтвердіть пароль"
+                  value={formData.confirmPassword}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      confirmPassword: e.target.value,
+                    })
+                  }
+                  required
+                  style={inputStyle}
+                />
+              </div>
+            </Form.Group>
+
+            <Button
+              type="submit"
+              className="w-100 mt-2"
+              style={{
+                background: "linear-gradient(45deg, #3182ce, #2c5282)",
+                border: "none",
+                padding: "12px",
+                borderRadius: "12px",
+                fontSize: "1.1rem",
+                fontWeight: "500",
+                letterSpacing: "0.5px",
+                boxShadow: "0 4px 15px rgba(49, 130, 206, 0.2)",
+                transition: "all 0.3s ease",
+              }}
+            >
+              Зареєструватися
+              <FontAwesomeIcon icon={faArrowRight} className="ms-2" />
+            </Button>
+
+            <div className="text-center mt-4">
+              <p className="text-muted mb-0">
+                Вже маєте акаунт?{" "}
+                <Link
+                  to="/login"
+                  className="text-primary text-decoration-none"
+                  style={{
+                    fontWeight: "500",
+                    transition: "color 0.3s ease",
+                  }}
+                >
+                  Увійти
+                </Link>
+              </p>
+            </div>
+          </Form>
+        </Card>
+      </Container>
+    </div>
+  );
 };
 
 export default RegisterPage;

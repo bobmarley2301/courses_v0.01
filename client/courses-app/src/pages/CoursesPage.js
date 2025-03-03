@@ -1,84 +1,191 @@
-import  React, { useEffect, useState, useContext } from 'react';
-import { Container, Row, Col, Card, Button } from 'react-bootstrap';
-import AOS from 'aos';
-import 'aos/dist/aos.css';
-import { Link } from 'react-router-dom';
-import { getCourses } from '../api.js';
-import { AuthContext } from '../context/AuthContext';
+import React, { useEffect, useState } from "react";
+import { Container, Alert, Button } from "react-bootstrap";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faGraduationCap } from "@fortawesome/free-solid-svg-icons";
+import { Link, useNavigate } from "react-router-dom";
+import CourseList from "../components/CourseList";
+import { getCourses } from "../api";
 
 const CoursesPage = () => {
-    const [courses, setCourses] = useState([]);
-    const { user } = useContext(AuthContext);
+  const [courses, setCourses] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const navigate = useNavigate();
 
-    useEffect(() => {
-        AOS.init({
-            duration: 1000,
-            once: true
-        });
+  useEffect(() => {
+    const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
+    const userId = localStorage.getItem("userId");
+    setIsAuthenticated(isAuthenticated && userId);
 
-        const fetchCourses = async () => {
-            try {
-                const data = await getCourses();
-                console.log(data);
-                setCourses(data);
-            } catch (error) {
-                console.error('Error fetching courses:', error);
-            }
-        };
+    const fetchCourses = async () => {
+      try {
+        setIsLoading(true);
+        const apiCourses = await getCourses();
+        console.log("Отримані курси:", apiCourses);
 
-        fetchCourses();
-    }, []);
+        if (Array.isArray(apiCourses)) {
+          const coursesWithProgress = apiCourses.map((course) => {
+            const progress = localStorage.getItem(
+              `courseProgress_${course._id}`
+            );
+            const completedVideos = progress
+              ? JSON.parse(progress).completedCount
+              : 0;
+            return {
+              ...course,
+              completedVideos,
+              totalVideos: course.videos?.length || 0,
+              progress: course.videos?.length
+                ? Math.round((completedVideos / course.videos.length) * 100)
+                : 0,
+            };
+          });
 
+          const sortedCourses = coursesWithProgress.sort(
+            (a, b) => b.students - a.students
+          );
+          setCourses(sortedCourses);
+        } else {
+          console.error("Неправильний формат даних курсів:", apiCourses);
+          setError("Помилка формату даних курсів");
+        }
+      } catch (error) {
+        console.error("Помилка при отриманні курсів:", error);
+        setError("Не вдалося завантажити курси. Спробуйте пізніше.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (isAuthenticated && userId) {
+      fetchCourses();
+    } else {
+      setIsLoading(false);
+    }
+  }, []);
+
+  if (!isAuthenticated) {
     return (
-        <Container fluid className="py-5 min-vh-100">
-            <Row>
-                <Col md={9} data-aos="fade-left">
-                    {user ? (
-                        <>
-                            <Row className="mb-4">
-                                <Col>
-                                    <h2 className="text-center mb-3">Наші курси</h2>
-                                    <p className="text-center">
-                                        Досліджуйте наш широкий вибір курсів, адаптованих до ваших навчальних потреб.
-                                    </p>
-                                </Col>
-                            </Row>
-                            <Row>
-                                {courses.map((course, idx) => (
-                                    <Col xs={12} md={6} lg={4} key={idx} className="mb-4">
-                                        <Card className="h-100 shadow-sm">
-                                            <Card.Img variant="top" src={course.image || 'https://via.placeholder.com/300?text=Курс'} />
-                                            <Card.Body className="d-flex flex-column">
-                                                <Card.Title>{course.title}</Card.Title>
-                                                <Card.Text>{course.description}</Card.Text>
-                                                <Button
-                                                    as={Link}
-                                                    to={`/course/${course._id}`}
-                                                    variant="outline-dark"
-                                                    className="mt-auto align-self-start"
-                                                >
-                                                    Переглянути курс
-                                                </Button>
-                                            </Card.Body>
-                                        </Card>
-                                    </Col>
-                                ))}
-                            </Row>
-                        </>
-                    ) : (
-                        <Row className="justify-content-center">
-                            <Col md={8} className="text-center">
-                                <h2>Будь ласка, увійдіть або зареєструйтесь</h2>
-                                <p>Щоб переглянути наші курси, вам необхідно увійти або зареєструватися.</p>
-                                <Button as={Link} to="/login" variant="dark" className="mx-2">Увійти</Button>
-                                <Button as={Link} to="/register" variant="outline-dark" className="mx-2">Зареєструватися</Button>
-                            </Col>
-                        </Row>
-                    )}
-                </Col>
-            </Row>
+      <div
+        style={{
+          backgroundColor: "#ffffff",
+          minHeight: "100vh",
+          paddingTop: "2rem",
+        }}
+      >
+        <Container>
+          <div className="text-center mb-5" data-aos="fade-down">
+            <FontAwesomeIcon
+              icon={faGraduationCap}
+              style={{
+                fontSize: "3rem",
+                color: "#3182ce",
+                marginBottom: "1rem",
+              }}
+            />
+            <h1
+              style={{
+                color: "#2d3748",
+                fontSize: "2.5rem",
+                fontWeight: "bold",
+                marginBottom: "1rem",
+              }}
+            >
+              Наші курси
+            </h1>
+            <Alert
+              variant="info"
+              className="mx-auto"
+              style={{ maxWidth: "600px" }}
+            >
+              <h4>Для перегляду курсів необхідно увійти в систему</h4>
+              <p className="mb-3">
+                Будь ласка, увійдіть в свій акаунт або зареєструйтеся, щоб
+                отримати доступ до всіх курсів
+              </p>
+              <div className="d-flex justify-content-center gap-3">
+                <Button as={Link} to="/login" variant="primary">
+                  Увійти
+                </Button>
+                <Button as={Link} to="/register" variant="outline-primary">
+                  Зареєструватися
+                </Button>
+              </div>
+            </Alert>
+          </div>
         </Container>
+      </div>
     );
+  }
+
+  return (
+    <div
+      style={{
+        backgroundColor: "#ffffff",
+        minHeight: "100vh",
+        paddingTop: "2rem",
+      }}
+    >
+      <Container>
+        <div className="text-center mb-5" data-aos="fade-down">
+          <FontAwesomeIcon
+            icon={faGraduationCap}
+            style={{
+              fontSize: "3rem",
+              color: "#3182ce",
+              marginBottom: "1rem",
+            }}
+          />
+          <h1
+            style={{
+              color: "#2d3748",
+              fontSize: "2.5rem",
+              fontWeight: "bold",
+              marginBottom: "1rem",
+            }}
+          >
+            Наші курси
+          </h1>
+          <p
+            style={{
+              color: "#718096",
+              fontSize: "1.2rem",
+              maxWidth: "800px",
+              margin: "0 auto",
+            }}
+          >
+            Досліджуйте наш широкий вибір курсів, створених для розвитку ваших
+            навичок та досягнення професійних цілей. Кожен курс розроблений
+            експертами галузі.
+          </p>
+        </div>
+
+        {isLoading ? (
+          <div className="text-center py-5">
+            <div className="spinner-border text-primary" role="status">
+              <span className="visually-hidden">Завантаження...</span>
+            </div>
+            <p className="mt-3" style={{ color: "#718096" }}>
+              Завантаження курсів...
+            </p>
+          </div>
+        ) : error ? (
+          <div className="text-center py-5">
+            <p style={{ color: "#E53E3E", fontSize: "1.1rem" }}>{error}</p>
+          </div>
+        ) : courses.length === 0 ? (
+          <div className="text-center py-5">
+            <p style={{ color: "#718096", fontSize: "1.1rem" }}>
+              На даний момент курси відсутні. Будь ласка, завітайте пізніше.
+            </p>
+          </div>
+        ) : (
+          <CourseList courses={courses} />
+        )}
+      </Container>
+    </div>
+  );
 };
 
 export default CoursesPage;
