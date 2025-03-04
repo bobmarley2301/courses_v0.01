@@ -256,10 +256,17 @@ const VideoList = () => {
                         <Badge
                           bg="success"
                           className="d-inline-flex align-items-center"
+                          style={{
+                            cursor: "pointer",
+                            transition: "all 0.3s ease",
+                          }}
                         >
                           <FontAwesomeIcon
                             icon={faCheckCircle}
                             className="me-1"
+                            style={{
+                              transition: "color 0.3s ease",
+                            }}
                           />
                           <span className="d-none d-sm-inline">
                             Переглянуто
@@ -286,19 +293,21 @@ const VideoList = () => {
                       }}
                     >
                       {video.description}
-                    </p> 
+                    </p>
                   </div>
 
                   <div className="d-flex gap-2 w-100 w-md-auto justify-content-between justify-content-md-start">
                     <Button
                       onClick={() => toggleVideoCompletion(video._id)}
                       variant={
-                        video.completed
-                          ? "outline-success"
-                          : "outline-secondary"
+                        video.completed ? "success" : "outline-secondary"
                       }
                       className="px-3 d-inline-flex align-items-center justify-content-center"
-                      style={{ minWidth: "44px", height: "44px" }}
+                      style={{
+                        minWidth: "44px",
+                        height: "44px",
+                        transition: "all 0.3s ease",
+                      }}
                       title={
                         video.completed
                           ? "Позначити як непереглянуте"
@@ -307,7 +316,10 @@ const VideoList = () => {
                     >
                       <FontAwesomeIcon
                         icon={video.completed ? faTimes : faCheck}
-                        className={video.completed ? "text-success" : ""}
+                        className={video.completed ? "text-white" : ""}
+                        style={{
+                          transition: "color 0.3s ease",
+                        }}
                       />
                     </Button>
 
@@ -332,5 +344,19 @@ const VideoList = () => {
     </div>
   );
 };
+
+// Додайте цей CSS в кінець файлу
+const styles = `
+  .bg-success:hover .fa-check-circle {
+    color: white !important;
+  }
+  .btn-success:hover .fa-times {
+    color: white !important;
+  }
+`;
+
+const styleSheet = document.createElement("style");
+styleSheet.innerText = styles;
+document.head.appendChild(styleSheet);
 
 export default VideoList;
