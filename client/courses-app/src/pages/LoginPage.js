@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Container, Form, Button, Card, Alert } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -10,6 +10,7 @@ import {
 import { loginUser } from "../api";
 import AOS from "aos";
 import "aos/dist/aos.css";
+import { AuthContext } from "../context/AuthContext";
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
@@ -19,6 +20,7 @@ const LoginPage = () => {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { login } = useContext(AuthContext);
 
   useEffect(() => {
     AOS.init({
@@ -37,11 +39,8 @@ const LoginPage = () => {
       console.log("Login response:", response);
 
       if (response && response._id) {
-        // Зберігаємо дані користувача
-        localStorage.setItem("userId", response._id);
-        localStorage.setItem("userName", response.name);
-        localStorage.setItem("userEmail", response.email);
-        localStorage.setItem("isAuthenticated", "true");
+        // Викликаємо функцію login з контексту
+        login(response);
 
         // Перенаправляємо на сторінку курсів
         navigate("/course");
