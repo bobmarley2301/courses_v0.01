@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import {
   Container,
   Row,
@@ -9,6 +9,7 @@ import {
   Spinner,
   ProgressBar,
   Badge,
+  Alert,
 } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -30,72 +31,89 @@ const VideoList = () => {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const { courseId } = useParams();
+  const navigate = useNavigate();
 
-  // Функція для отримання прогресу з localStorage
   const getVideoProgress = (videoId) => {
-    const progress = localStorage.getItem("videoProgress");
-    if (progress) {
-      const progressData = JSON.parse(progress);
-      return progressData[videoId] || false;
+    try {
+      const progress = localStorage.getItem(`videoProgress_${courseId}`);
+      if (progress) {
+        const progressData = JSON.parse(progress);
+        return progressData[videoId] || false;
+      }
+      return false;
+    } catch (error) {
+      console.error("Помилка при отриманні прогресу:", error);
+      return false;
     }
-    return false;
   };
 
-  // Функція для збереження прогресу в localStorage
   const saveVideoProgress = (videoId, completed) => {
-    const progress = localStorage.getItem("videoProgress") || "{}";
-    const progressData = JSON.parse(progress);
-    progressData[videoId] = completed;
-    localStorage.setItem("videoProgress", JSON.stringify(progressData));
+    try {
+      const progressKey = `videoProgress_${courseId}`;
+      const progress = localStorage.getItem(progressKey) || "{}";
+      const progressData = JSON.parse(progress);
+      progressData[videoId] = completed;
+      localStorage.setItem(progressKey, JSON.stringify(progressData));
 
-    // Оновлюємо стан відео
-    setVideos((prevVideos) =>
-      prevVideos.map((video) =>
-        video._id === videoId ? { ...video, completed } : video
-      )
-    );
+      setVideos((prevVideos) =>
+        prevVideos.map((video) =>
+          video._id === videoId ? { ...video, completed } : video
+        )
+      );
+    } catch (error) {
+      console.error("Помилка при збереженні прогресу:", error);
+    }
   };
 
   useEffect(() => {
     const fetchVideos = async () => {
       try {
         setIsLoading(true);
+        setError(null);
+
+        if (!courseId) {
+          throw new Error("ID курсу не вказано");
+        }
+
         const data = await getCourse(courseId);
-        console.log("Fetched course data:", data);
-        if (data) {
-          setCourse(data);
-          if (data.videos) {
-            // Додаємо інформацію про прогрес до кожного відео
-            const videosWithProgress = data.videos.map((video) => ({
-              ...video,
-              completed: getVideoProgress(video._id),
-            }));
-            setVideos(videosWithProgress);
-          } else {
-            throw new Error("Відео не знайдено");
-          }
-        } else {
+
+        if (!data) {
           throw new Error("Курс не знайдено");
         }
+
+        setCourse(data);
+
+        if (!Array.isArray(data.videos)) {
+          throw new Error("Відео не знайдено");
+        }
+
+        const videosWithProgress = data.videos.map((video) => ({
+          ...video,
+          completed: getVideoProgress(video._id),
+          locked: false, // За замовчуванням відео не заблоковане
+        }));
+
+        setVideos(videosWithProgress);
       } catch (error) {
-        setError(error.message);
         console.error("Помилка при завантаженні відео:", error);
+        setError(error.message || "Помилка при завантаженні курсу");
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchVideos();
+
     AOS.init({
       duration: 1000,
       once: true,
+      offset: 100,
     });
   }, [courseId]);
 
-  // Функція для перемикання стану відео
   const toggleVideoCompletion = (videoId) => {
     const video = videos.find((v) => v._id === videoId);
-    if (video) {
+    if (video && !video.locked) {
       saveVideoProgress(videoId, !video.completed);
     }
   };
@@ -116,21 +134,18 @@ const VideoList = () => {
   if (error) {
     return (
       <Container className="py-5 min-vh-100">
-        <div
-          className="text-center p-5 rounded-3"
-          style={{
-            backgroundColor: "#FEE2E2",
-            maxWidth: "600px",
-            margin: "0 auto",
-          }}
-        >
-          <h3 className="text-danger mb-3">Помилка</h3>
-          <p className="text-danger mb-4">{error}</p>
-          <Button as={Link} to="/courses" variant="outline-danger">
+        <Alert variant="danger" className="text-center p-4">
+          <h3 className="mb-3">Помилка</h3>
+          <p className="mb-4">{error}</p>
+          <Button
+            as={Link}
+            to={`/course/${course._id}`}
+            variant="outline-danger"
+          >
             <FontAwesomeIcon icon={faArrowLeft} className="me-2" />
             Повернутися до курсів
           </Button>
-        </div>
+        </Alert>
       </Container>
     );
   }
@@ -138,19 +153,20 @@ const VideoList = () => {
   if (!course) {
     return (
       <Container className="py-5 min-vh-100">
-        <div className="text-center">
-          <h3 className="text-muted mb-4">Курс не знайдено</h3>
-          <Button as={Link} to="/courses" variant="primary">
+        <Alert variant="warning" className="text-center p-4">
+          <h3 className="mb-4">Курс не знайдено</h3>
+          <Button as={Link} to="/course" variant="primary">
             <FontAwesomeIcon icon={faArrowLeft} className="me-2" />
             Повернутися до курсів
           </Button>
-        </div>
+        </Alert>
       </Container>
     );
   }
 
   const completedVideos = videos.filter((video) => video.completed).length;
-  const progress = (completedVideos / videos.length) * 100;
+  const progress =
+    videos.length > 0 ? (completedVideos / videos.length) * 100 : 0;
 
   return (
     <div style={{ minHeight: "100vh" }}>
@@ -158,7 +174,7 @@ const VideoList = () => {
         {/* Хедер курсу */}
         <div className="mb-4 mb-md-5" data-aos="fade-down">
           <Link
-            to="/courses"
+            to="/course"
             className="text-decoration-none d-inline-flex align-items-center mb-3 mb-md-4"
             style={{ color: "#3182CE" }}
           >
@@ -200,12 +216,13 @@ const VideoList = () => {
                 label={`${Math.round(progress)}%`}
                 style={{ height: "10px" }}
                 variant="success"
+                animated={progress > 0 && progress < 100}
               />
             </div>
 
             <Row className="g-3 g-md-4">
               <Col xs={6} md={4}>
-                <div className="p-3 bg-light rounded-3">
+                <div className="p-3 rounded-3 border">
                   <small className="text-muted d-block mb-1">
                     Всього відео:
                   </small>
@@ -213,7 +230,7 @@ const VideoList = () => {
                 </div>
               </Col>
               <Col xs={6} md={4}>
-                <div className="p-3 bg-light rounded-3">
+                <div className="p-3 rounded-3 border">
                   <small className="text-muted d-block mb-1">
                     Переглянуто:
                   </small>
@@ -221,7 +238,7 @@ const VideoList = () => {
                 </div>
               </Col>
               <Col xs={12} md={4}>
-                <div className="p-3 bg-light rounded-3">
+                <div className="p-3 rounded-3 border">
                   <small className="text-muted d-block mb-1">Залишилось:</small>
                   <h5 className="mb-0">{videos.length - completedVideos}</h5>
                 </div>
@@ -231,122 +248,127 @@ const VideoList = () => {
         </div>
 
         {/* Список відео */}
-        <div className="video-list">
-          {videos.map((video, idx) => (
-            <Card
-              key={video._id}
-              className="mb-3 border-0 shadow-sm"
-              data-aos="fade-up"
-              data-aos-delay={idx * 100}
-            >
-              <Card.Body className="p-3 p-md-4">
-                <div className="d-flex flex-column flex-md-row justify-content-between align-items-start gap-3">
-                  <div className="flex-grow-1">
-                    <div className="d-flex flex-wrap align-items-center gap-2 mb-2">
-                      <h5
-                        className="mb-0"
-                        style={{
-                          fontSize: "calc(1.1rem + 0.2vw)",
-                          wordBreak: "break-word",
-                        }}
-                      >
-                        {video.title}
-                      </h5>
-                      {video.completed && (
-                        <Badge
-                          bg="success"
-                          className="d-inline-flex align-items-center"
+        {videos.length > 0 ? (
+          <div className="video-list">
+            {videos.map((video, idx) => (
+              <Card
+                key={video._id}
+                className="mb-3 border shadow-sm hover-shadow"
+                data-aos="fade-up"
+                data-aos-delay={idx * 100}
+              >
+                <Card.Body className="p-3 p-md-4">
+                  <div className="d-flex flex-column flex-md-row justify-content-between align-items-start gap-3">
+                    <div className="flex-grow-1">
+                      <div className="d-flex flex-wrap align-items-center gap-2 mb-2">
+                        <h5
+                          className="mb-0"
                           style={{
-                            cursor: "pointer",
-                            transition: "all 0.3s ease",
+                            fontSize: "calc(1.1rem + 0.2vw)",
+                            wordBreak: "break-word",
                           }}
                         >
-                          <FontAwesomeIcon
-                            icon={faCheckCircle}
-                            className="me-1"
-                            style={{
-                              transition: "color 0.3s ease",
-                            }}
-                          />
-                          <span className="d-none d-sm-inline">
-                            Переглянуто
-                          </span>
-                        </Badge>
-                      )}
-                      {video.locked && (
-                        <Badge
-                          bg="warning"
-                          className="d-inline-flex align-items-center"
-                        >
-                          <FontAwesomeIcon icon={faLock} className="me-1" />
-                          <span className="d-none d-sm-inline">
-                            Заблоковано
-                          </span>
-                        </Badge>
-                      )}
-                    </div>
-                    <p
-                      className="text-muted mb-3"
-                      style={{
-                        fontSize: "calc(0.9rem + 0.1vw)",
-                        lineHeight: "1.5",
-                      }}
-                    >
-                      {video.description}
-                    </p>
-                  </div>
-
-                  <div className="d-flex gap-2 w-100 w-md-auto justify-content-between justify-content-md-start">
-                    <Button
-                      onClick={() => toggleVideoCompletion(video._id)}
-                      variant={
-                        video.completed ? "success" : "outline-secondary"
-                      }
-                      className="px-3 d-inline-flex align-items-center justify-content-center"
-                      style={{
-                        minWidth: "44px",
-                        height: "44px",
-                        transition: "all 0.3s ease",
-                      }}
-                      title={
-                        video.completed
-                          ? "Позначити як непереглянуте"
-                          : "Позначити як переглянуте"
-                      }
-                    >
-                      <FontAwesomeIcon
-                        icon={video.completed ? faTimes : faCheck}
-                        className={video.completed ? "text-white" : ""}
+                          {video.title}
+                        </h5>
+                        {video.completed && (
+                          <Badge
+                            bg="success"
+                            className="d-inline-flex align-items-center"
+                          >
+                            <FontAwesomeIcon
+                              icon={faCheckCircle}
+                              className="me-1"
+                            />
+                            <span className="d-none d-sm-inline">
+                              Переглянуто
+                            </span>
+                          </Badge>
+                        )}
+                        {video.locked && (
+                          <Badge
+                            bg="warning"
+                            className="d-inline-flex align-items-center"
+                          >
+                            <FontAwesomeIcon icon={faLock} className="me-1" />
+                            <span className="d-none d-sm-inline">
+                              Заблоковано
+                            </span>
+                          </Badge>
+                        )}
+                      </div>
+                      <p
+                        className="text-muted mb-3"
                         style={{
-                          transition: "color 0.3s ease",
+                          fontSize: "calc(0.9rem + 0.1vw)",
+                          lineHeight: "1.5",
                         }}
-                      />
-                    </Button>
+                      >
+                        {video.description}
+                      </p>
+                    </div>
 
-                    <Button
-                      as={Link}
-                      to={`/course/${courseId}/video/${video._id}`}
-                      variant={video.locked ? "secondary" : "primary"}
-                      className="px-3 px-md-4 flex-grow-1 flex-md-grow-0 d-inline-flex align-items-center justify-content-center"
-                      style={{ minWidth: "140px" }}
-                      disabled={video.locked}
-                    >
-                      <FontAwesomeIcon icon={faPlay} className="me-2" />
-                      <span>{video.locked ? "Заблоковано" : "Дивитися"}</span>
-                    </Button>
+                    <div className="d-flex gap-2 w-100 w-md-auto justify-content-between justify-content-md-start">
+                      <Button
+                        onClick={() => toggleVideoCompletion(video._id)}
+                        variant={
+                          video.completed ? "success" : "outline-secondary"
+                        }
+                        className="px-3 d-inline-flex align-items-center justify-content-center"
+                        style={{
+                          minWidth: "44px",
+                          height: "44px",
+                          transition: "all 0.3s ease",
+                        }}
+                        title={
+                          video.completed
+                            ? "Позначити як непереглянуте"
+                            : "Позначити як переглянуте"
+                        }
+                        disabled={video.locked}
+                      >
+                        <FontAwesomeIcon
+                          icon={video.completed ? faTimes : faCheck}
+                          className={video.completed ? "text-white" : ""}
+                        />
+                      </Button>
+
+                      <Button
+                        as={Link}
+                        to={`/course/${courseId}/video/${video._id}`}
+                        variant={video.locked ? "secondary" : "primary"}
+                        className="px-3 px-md-4 flex-grow-1 flex-md-grow-0 d-inline-flex align-items-center justify-content-center"
+                        style={{ minWidth: "140px" }}
+                        disabled={video.locked}
+                      >
+                        <FontAwesomeIcon icon={faPlay} className="me-2" />
+                        <span>{video.locked ? "Заблоковано" : "Дивитися"}</span>
+                      </Button>
+                    </div>
                   </div>
-                </div>
-              </Card.Body>
-            </Card>
-          ))}
-        </div>
+                </Card.Body>
+              </Card>
+            ))}
+          </div>
+        ) : (
+          <Alert variant="info" className="text-center">
+            У цьому курсі поки немає відео
+          </Alert>
+        )}
       </Container>
     </div>
   );
 };
 
-// Додайте цей CSS в кінець файлу
+// Додаємо стилі
 const styles = `
+  .hover-shadow {
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+    background-color: white;
+  }
+  .hover-shadow:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    transform: translateY(-2px);
+  }
   .bg-success:hover .fa-check-circle {
     color: white !important;
   }
