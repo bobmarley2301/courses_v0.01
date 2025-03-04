@@ -14,6 +14,7 @@ import LoginPage from "./pages/LoginPage";
 import AuthProvider, { AuthContext } from "./context/AuthContext";
 import AdminMenu from "./pages/AdminMenu";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
+import ProfilePage from "./pages/ProfilePage";
 
 const AppNavbar = () => {
   const { user, logout } = useContext(AuthContext);
@@ -341,7 +342,8 @@ const App = () => {
                 <Route path="/register" element={<RegisterPage />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/admin/*" element={<AdminMenu />} />
-                <Route path="/privacy-policy" element="PrivacyPolicy"></Route>
+                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                <Route path="/profile" element={<ProfilePage />} />
               </Routes>
             </Container>
           </main>
