@@ -163,7 +163,7 @@ const CourseCard = ({ course }) => {
             color: "#4a5568",
           }}
         >
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
+          {/* <div style={{ display: "flex", justifyContent: "space-between" }}>
             <span>
               <FontAwesomeIcon icon={faClock} style={{ marginRight: "5px" }} />
               {course.duration}
@@ -172,7 +172,7 @@ const CourseCard = ({ course }) => {
               <FontAwesomeIcon icon={faUsers} style={{ marginRight: "5px" }} />
               {course.students} студентів
             </span>
-          </div>
+          </div> */}
 
           {course.startDate && (
             <div style={{ display: "flex", alignItems: "center" }}>

@@ -12,7 +12,7 @@ import "aos/dist/aos.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import LoginPage from "./pages/LoginPage";
 import AuthProvider, { AuthContext } from "./context/AuthContext";
-import AdminMenu from "./pages/AdminMenu";
+import AdminPage from "./pages/AdminPage";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import ProfilePage from "./pages/ProfilePage";
 
@@ -341,7 +341,7 @@ const App = () => {
                 />
                 <Route path="/register" element={<RegisterPage />} />
                 <Route path="/login" element={<LoginPage />} />
-                <Route path="/admin/*" element={<AdminMenu />} />
+                <Route path="/admin" element={<AdminPage />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                 <Route path="/profile" element={<ProfilePage />} />
               </Routes>
