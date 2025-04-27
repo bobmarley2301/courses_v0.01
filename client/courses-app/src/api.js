@@ -1,4 +1,4 @@
-const API_BASE_URL = "https://courses-v0-01-server.onrender.com/api";
+const API_BASE_URL = "http://localhost:4441/api";
 
 // Функції для роботи з курсами
 export async function getCourses() {
@@ -145,4 +145,20 @@ export async function loginUser(userData) {
 
   const data = await response.json();
   return data;
+}
+
+export async function executeCode(code, language) {
+  const response = await fetch(`${API_BASE_URL}/execute`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ code, language }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Помилка виконання коду: ${response.statusText}`);
+  }
+
+  return response.json();
 }

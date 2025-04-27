@@ -15,6 +15,7 @@ import AuthProvider, { AuthContext } from "./context/AuthContext";
 import AdminPage from "./pages/AdminPage";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import ProfilePage from "./pages/ProfilePage";
+import CodeEditorPage from "./pages/CodeEditorPage";
 
 const AppNavbar = () => {
   const { user, logout } = useContext(AuthContext);
@@ -108,6 +109,21 @@ const AppNavbar = () => {
               className="hover-effect"
             >
               Курси
+            </Nav.Link>
+            <Nav.Link
+              as={Link}
+              to="/code-editor"
+              style={{
+                color: "#2D3748",
+                fontWeight: "500",
+                padding: "0.5rem 1rem",
+                transition: "all 0.3s ease",
+                borderRadius: "0.5rem",
+                fontSize: "0.95rem",
+              }}
+              className="hover-effect"
+            >
+              Редактор коду
             </Nav.Link>
             {isAuthenticated ? (
               <NavDropdown
@@ -344,6 +360,7 @@ const App = () => {
                 <Route path="/admin" element={<AdminPage />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                 <Route path="/profile" element={<ProfilePage />} />
+                <Route path="/code-editor" element={<CodeEditorPage />} />
               </Routes>
             </Container>
           </main>
