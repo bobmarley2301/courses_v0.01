@@ -16,6 +16,8 @@ import AdminPage from "./pages/AdminPage";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import ProfilePage from "./pages/ProfilePage";
 import CodeEditorPage from "./pages/CodeEditorPage";
+import DevNewsPage from "./pages/DevNewsPage";
+import DevNewsDetailPage from "./pages/DevNewsDetailPage";
 
 const AppNavbar = () => {
   const { user, logout } = useContext(AuthContext);
@@ -124,6 +126,21 @@ const AppNavbar = () => {
               className="hover-effect"
             >
               Редактор коду
+            </Nav.Link>
+            <Nav.Link
+              as={Link}
+              to="/dev-news"
+              style={{
+                color: "#2D3748",
+                fontWeight: "500",
+                padding: "0.5rem 1rem",
+                transition: "all 0.3s ease",
+                borderRadius: "0.5rem",
+                fontSize: "0.95rem",
+              }}
+              className="hover-effect"
+            >
+              Новини розробника
             </Nav.Link>
             {isAuthenticated ? (
               <NavDropdown
@@ -361,6 +378,8 @@ const App = () => {
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                 <Route path="/profile" element={<ProfilePage />} />
                 <Route path="/code-editor" element={<CodeEditorPage />} />
+                <Route path="/dev-news" element={<DevNewsPage />} />
+                <Route path="/dev-news/:id" element={<DevNewsDetailPage />} />
               </Routes>
             </Container>
           </main>
