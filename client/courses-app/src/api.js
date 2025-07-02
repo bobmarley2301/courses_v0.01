@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://localhost:4441/api";
+const API_BASE_URL = "https://courses-v0-01.onrender.com/api";
 
 // Функції для роботи з курсами
 export async function getCourses() {
